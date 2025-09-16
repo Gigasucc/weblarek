@@ -1,4 +1,3 @@
-
 import { IBuyer } from '../../types';
 
 export class Buyer {
@@ -7,17 +6,17 @@ export class Buyer {
   private phone: string = '';
   private email: string = '';
 
-  constructor(data: IBuyer | null = null) {
+  constructor(data: Partial<IBuyer> | null = null) {
     if (data) {
       this.setData(data);
     }
   }
 
-  setData(data: IBuyer): void {
-    this.payment = data.payment;
-    this.address = data.address;
-    this.phone = data.phone;
-    this.email = data.email;
+  setData(data: Partial<IBuyer>): void {
+    if (data.payment !== undefined) this.payment = data.payment;
+    if (data.address !== undefined) this.address = data.address;
+    if (data.phone !== undefined) this.phone = data.phone;
+    if (data.email !== undefined) this.email = data.email;
   }
 
   getData(): IBuyer {
@@ -36,13 +35,12 @@ export class Buyer {
     this.email = '';
   }
 
-  validate(): boolean {
-    return (
-      !!this.payment &&
-      !!this.address.trim() &&
-      /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(this.email) &&
-      /^\+?\d{10,15}$/.test(this.phone)
-    );
+  validate(): Record<keyof IBuyer, boolean> {
+    return {
+      payment: !!this.payment,
+      address: !!this.address.trim(),
+      email: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(this.email),
+      phone: /^\+?\d{10,15}$/.test(this.phone),
+    };
   }
 }
-
