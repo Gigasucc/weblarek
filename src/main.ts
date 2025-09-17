@@ -3,11 +3,11 @@ import './scss/styles.scss';
 console.log('main.ts работает!');
 
 import { Api } from './components/base/Api';
-import { ShopApi } from './components/Models/ShopApi';
-import { Products } from './components/Models/Products';
+import { ShopApi } from './components/models/ShopApi';
+import { Products } from './components/models/Products';
 import { apiProducts } from './utils/data';
-import { Cart } from './components/Models/Cart';
-import { Buyer } from './components/Models/Buyer';
+import { Cart } from './components/models/Cart';
+import { Buyer } from './components/models/Buyer';
 
 // Каталог
 const productsModel = new Products();
