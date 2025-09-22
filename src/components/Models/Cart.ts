@@ -1,10 +1,12 @@
-
 import { IProduct } from '../../types';
+import { IEvents } from '../base/Events';
 
 export class Cart {
   private items: IProduct[] = [];
+  private events: IEvents;
 
-  constructor(items: IProduct[] = []) {
+  constructor(events: IEvents, items: IProduct[] = []) {
+    this.events = events;
     this.items = items;
   }
 
@@ -12,16 +14,25 @@ export class Cart {
     return this.items;
   }
 
+  // Cart.ts
   addItem(product: IProduct): void {
-    this.items.push(product);
+  // Добавляем более строгую проверку
+  if (product.price === 0 || product.price === null || product.price === undefined) {
+    console.warn(`Попытка добавить бесценный товар «${product.title}»`);
+    return;
   }
+  this.items.push(product);
+  this.events.emit('cart:add', product);
+}
 
   removeItem(product: IProduct): void {
     this.items = this.items.filter((item) => item.id !== product.id);
+    this.events.emit('cart:remove', product);
   }
 
   clear(): void {
     this.items = [];
+    this.events.emit('cart:clear');
   }
 
   getTotalPrice(): number {
