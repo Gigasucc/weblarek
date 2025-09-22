@@ -30,15 +30,11 @@ export class ContactsView extends FormView<ContactsProps> {
   private validateForm() {
     const isEmailNotEmpty = this.emailInput.value.trim().length > 0;
     const isPhoneNotEmpty = this.phoneInput.value.trim().length > 0;
-    // Точная валидация — в модели, но тут простая проверка "не пусто"
     const isValid = isEmailNotEmpty && isPhoneNotEmpty;
     this.render({ valid: isValid, error: undefined });
   }
 
-  /**
-   * onSubmit не выполняет модельную валидацию,
-   * только передаёт данные презентеру — презентер примет решение.
-   */
+
   onSubmit(callback: (formData: { email: string; phone: string }) => void) {
     this.formEl.addEventListener('submit', (e) => {
       e.preventDefault();

@@ -15,17 +15,14 @@ export class ProductPreviewView extends CardView<ProductPreviewProps> {
     this.buttonEl = container.querySelector('.card__button')!;
   }
 
-  // ProductPreviewView.ts
 render(data?: Partial<ProductPreviewProps>): HTMLElement {
   super.render(data);
 
   if (data?.disabled) {
-    // бесценный товар
     this.buttonEl.disabled = true;
     this.buttonEl.textContent = 'Недоступно';
-    this.buttonEl.classList.add('button_disabled'); // добавляем стиль
+    this.buttonEl.classList.add('button_disabled'); 
   } else {
-    // доступный товар
     this.buttonEl.disabled = false;
     this.buttonEl.classList.remove('button_disabled');
     this.buttonEl.textContent = data?.inCart

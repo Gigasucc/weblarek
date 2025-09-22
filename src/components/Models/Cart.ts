@@ -14,9 +14,9 @@ export class Cart {
     return this.items;
   }
 
-  // Cart.ts
+
   addItem(product: IProduct): void {
-  // Добавляем более строгую проверку
+
   if (product.price === 0 || product.price === null || product.price === undefined) {
     console.warn(`Попытка добавить бесценный товар «${product.title}»`);
     return;
