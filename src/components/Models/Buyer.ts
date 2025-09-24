@@ -66,7 +66,7 @@ export class Buyer {
     if (!this.phone.trim()) {
       errors.phone = 'Телефон не указан';
     } else if (!this.isValidPhone(this.phone)) {
-      errors.phone = 'Телефон должен содержать от 10 до 15 цифр';
+      errors.phone = 'Номер телефона не должен содержать букв';
     }
 
     return errors;
@@ -82,9 +82,22 @@ export class Buyer {
     return atIndex > 0 && email.indexOf('.', atIndex) > atIndex + 1;
   }
 
-  private isValidPhone(phone: string): boolean {
-    // Убираем все кроме цифр и проверяем длину
-    const digitsOnly = phone.replace(/\D/g, '');
-    return digitsOnly.length >= 10 && digitsOnly.length <= 15;
-  }
+   private isValidPhone(phone: string): boolean {
+
+        for (let i = 0; i < phone.length; i++) {
+            const char = phone[i];
+            
+            // Если символ является буквой (латинской или кириллической) - возвращаем false
+            if (
+                (char >= 'a' && char <= 'z') || // латинские маленькие
+                (char >= 'A' && char <= 'Z') || // латинские большие
+                (char >= 'а' && char <= 'я') || // кириллические маленькие
+                (char >= 'А' && char <= 'Я')    // кириллические большие
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
