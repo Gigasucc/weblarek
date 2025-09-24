@@ -1,4 +1,5 @@
-import { CardView, CardProps } from '../view/CardView';
+// BasketItemView.ts
+import { CardView, CardProps } from './CardView';
 
 interface BasketItemProps extends CardProps {
   index: number;
@@ -8,22 +9,19 @@ export class BasketItemView extends CardView<BasketItemProps> {
   private indexEl: HTMLElement;
   private deleteBtn: HTMLButtonElement;
 
-  constructor(template: HTMLTemplateElement) {
-    const container = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
+  constructor(container: HTMLElement, onDelete: () => void) {
     super(container);
 
     this.indexEl = container.querySelector('.basket__item-index')!;
     this.deleteBtn = container.querySelector('.basket__item-delete')!;
+
+    this.deleteBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      onDelete();
+    });
   }
 
-  render(data?: Partial<BasketItemProps>): HTMLElement {
-    if (data?.index !== undefined) {
-      this.indexEl.textContent = String(data.index);
-    }
-    return super.render(data);
-  }
-
-  onDelete(callback: () => void) {
-    this.deleteBtn.addEventListener('click', callback);
+  set index(value: number) {
+    this.indexEl.textContent = String(value);
   }
 }

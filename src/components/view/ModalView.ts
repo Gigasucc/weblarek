@@ -1,11 +1,15 @@
 import { Component } from '../base/Component';
+import { ensureElement } from '../../utils/utils';
 
 export class ModalView extends Component<{}> {
   private closeBtn: HTMLElement;
+  private contentEl: HTMLElement;
 
   constructor(container: HTMLElement) {
     super(container);
-    this.closeBtn = container.querySelector('.modal__close')!;
+    
+    this.closeBtn = ensureElement<HTMLElement>('.modal__close', container);
+    this.contentEl = ensureElement<HTMLElement>('.modal__content', container);
 
     this.closeBtn.addEventListener('click', () => this.close());
     container.addEventListener('click', (e) => {
@@ -14,15 +18,13 @@ export class ModalView extends Component<{}> {
   }
 
   open(content: HTMLElement) {
-    const contentEl = this.container.querySelector('.modal__content')!;
-    contentEl.innerHTML = '';
-    contentEl.appendChild(content);
+    this.contentEl.innerHTML = '';
+    this.contentEl.appendChild(content);
     this.container.classList.add('modal_active');
   }
 
   close() {
     this.container.classList.remove('modal_active');
-    const contentEl = this.container.querySelector('.modal__content')!;
-    contentEl.innerHTML = '';
+    this.contentEl.innerHTML = '';
   }
 }

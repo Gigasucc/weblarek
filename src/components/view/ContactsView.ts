@@ -1,4 +1,5 @@
-import { FormView, FormProps } from '../view/FormView';
+import { FormView, FormProps } from './FormView';
+import { IEvents } from '../base/Events';
 
 interface ContactsProps extends FormProps {
   email: string;
@@ -9,44 +10,31 @@ export class ContactsView extends FormView<ContactsProps> {
   private emailInput: HTMLInputElement;
   private phoneInput: HTMLInputElement;
 
-  constructor(template: HTMLTemplateElement) {
-    const container = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
+  constructor(container: HTMLElement, private events: IEvents) {
     super(container);
 
     this.emailInput = container.querySelector('input[name="email"]')!;
     this.phoneInput = container.querySelector('input[name="phone"]')!;
 
-    this.emailInput.addEventListener('input', () => this.validateForm());
-    this.phoneInput.addEventListener('input', () => this.validateForm());
-  }
+    this.emailInput.addEventListener('input', () => {
+      this.events.emit('contacts:emailChanged', { value: this.emailInput.value });
+    });
 
-  render(data?: Partial<ContactsProps>): HTMLElement {
-    super.render(data);
-    if (data?.email !== undefined) this.emailInput.value = data.email;
-    if (data?.phone !== undefined) this.phoneInput.value = data.phone;
-    return this.container;
-  }
+    this.phoneInput.addEventListener('input', () => {
+      this.events.emit('contacts:phoneChanged', { value: this.phoneInput.value });
+    });
 
-  private validateForm() {
-    const isEmailNotEmpty = this.emailInput.value.trim().length > 0;
-    const isPhoneNotEmpty = this.phoneInput.value.trim().length > 0;
-    const isValid = isEmailNotEmpty && isPhoneNotEmpty;
-    this.render({ valid: isValid, error: undefined });
-  }
-
-
-  onSubmit(callback: (formData: { email: string; phone: string }) => void) {
     this.formEl.addEventListener('submit', (e) => {
       e.preventDefault();
-
-      if ((this.submitBtn && this.submitBtn.disabled)) return;
-
-      const formData = {
-        email: this.emailInput.value.trim(),
-        phone: this.phoneInput.value.trim(),
-      };
-
-      callback(formData);
+      this.events.emit('contacts:submit');
     });
+  }
+
+  set email(value: string) {
+    this.emailInput.value = value;
+  }
+
+  set phone(value: string) {
+    this.phoneInput.value = value;
   }
 }

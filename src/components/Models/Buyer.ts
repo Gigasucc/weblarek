@@ -42,12 +42,49 @@ export class Buyer {
     this.events.emit('buyer:clear');
   }
 
-  validate(): Record<keyof IBuyer, boolean> {
-    return {
-      payment: !!this.payment,
-      address: !!this.address.trim(),
-      email: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(this.email),
-      phone: /^\+?\d{10,15}$/.test(this.phone),
-    };
+  validate(): Partial<Record<keyof IBuyer, string>> {
+    const errors: Partial<Record<keyof IBuyer, string>> = {};
+
+    // Валидация способа оплаты
+    if (!this.payment) {
+      errors.payment = 'Не выбран способ оплаты';
+    }
+
+    // Валидация адреса
+    if (!this.address.trim()) {
+      errors.address = 'Не указан адрес';
+    }
+
+    // Валидация email
+    if (!this.email.trim()) {
+      errors.email = 'Email не указан';
+    } else if (!this.isValidEmail(this.email)) {
+      errors.email = 'Некорректный формат email';
+    }
+
+    // Валидация телефона
+    if (!this.phone.trim()) {
+      errors.phone = 'Телефон не указан';
+    } else if (!this.isValidPhone(this.phone)) {
+      errors.phone = 'Телефон должен содержать от 10 до 15 цифр';
+    }
+
+    return errors;
+  }
+
+  isValid(): boolean {
+    return Object.keys(this.validate()).length === 0;
+  }
+
+  private isValidEmail(email: string): boolean {
+    // Простая проверка наличия @ и точки после нее
+    const atIndex = email.indexOf('@');
+    return atIndex > 0 && email.indexOf('.', atIndex) > atIndex + 1;
+  }
+
+  private isValidPhone(phone: string): boolean {
+    // Убираем все кроме цифр и проверяем длину
+    const digitsOnly = phone.replace(/\D/g, '');
+    return digitsOnly.length >= 10 && digitsOnly.length <= 15;
   }
 }

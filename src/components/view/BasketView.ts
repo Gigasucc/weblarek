@@ -1,12 +1,18 @@
+// BasketView.ts
 import { Component } from '../base/Component';
 
-export class BasketView extends Component<{}> {
+interface BasketData {
+  items: HTMLElement[];
+  total: string;
+  valid: boolean;
+}
+
+export class BasketView extends Component<BasketData> {
   private listEl: HTMLElement;
   private totalEl: HTMLElement;
   private checkoutBtn: HTMLButtonElement;
 
-  constructor(template: HTMLTemplateElement) {
-    const container = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
+  constructor(container: HTMLElement) {
     super(container);
 
     this.listEl = container.querySelector('.basket__list')!;
@@ -14,21 +20,27 @@ export class BasketView extends Component<{}> {
     this.checkoutBtn = container.querySelector('.basket__button')!;
   }
 
-  renderItems(items: HTMLElement[]) {
-    if (items.length) {
-      this.listEl.replaceChildren(...items);
-      this.checkoutBtn.disabled = false;
+  set items(value: HTMLElement[]) {
+    if (value.length) {
+      this.listEl.replaceChildren(...value);
     } else {
       this.listEl.replaceChildren(document.createTextNode('Корзина пуста'));
-      this.checkoutBtn.disabled = true;
     }
   }
 
-  setTotal(total: string) {
-    this.totalEl.textContent = total;
+  set total(value: string) {
+    this.totalEl.textContent = value;
   }
 
-  onCheckout(callback: () => void) {
-    this.checkoutBtn.addEventListener('click', callback);
+  set valid(value: boolean) {
+    this.checkoutBtn.disabled = !value;
+  }
+
+  // Добавляем метод для обработки нажатия на кнопку оформления
+  setCheckoutHandler(callback: () => void) {
+    this.checkoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      callback();
+    });
   }
 }

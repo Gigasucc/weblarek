@@ -1,32 +1,16 @@
-import { CardView, CardProps } from './CardView';
+import { CategoryCardView, CategoryCardProps } from './CardView';
 
-interface CatalogCardProps extends CardProps {
+interface CatalogCardProps extends CategoryCardProps {
   inCart: boolean;
-  disabled?: boolean;
 }
 
-export class CatalogCardView extends CardView<CatalogCardProps> {
-  private btn: HTMLButtonElement;
-
-  constructor(template: HTMLTemplateElement) {
-    const button = template
-      .content
-      .firstElementChild!
-      .cloneNode(true) as HTMLButtonElement;
-
-    super(button);
-    this.btn = button;
+export class CatalogCardView extends CategoryCardView<CatalogCardProps> {
+  constructor(container: HTMLElement, onClick: () => void) {
+    super(container);
+    this.container.addEventListener('click', onClick);
   }
 
-  render(data?: Partial<CatalogCardProps>): HTMLElement {
-    super.render(data);
-
-    this.btn.classList.toggle('card_in-cart', !!data?.inCart);
-
-    return this.btn;
-  }
-
-  onClick(callback: () => void) {
-    this.btn.addEventListener('click', callback);
+  set inCart(value: boolean) {
+    this.container.classList.toggle('card_in-cart', value);
   }
 }

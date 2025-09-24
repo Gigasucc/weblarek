@@ -1,52 +1,36 @@
-import { CardView, CardProps } from './CardView';
+import { CategoryCardView, CategoryCardProps } from './CardView';
 
-interface ProductPreviewProps extends CardProps {
+interface ProductPreviewProps extends CategoryCardProps {
   inCart: boolean;
   disabled?: boolean;
 }
 
-export class ProductPreviewView extends CardView<ProductPreviewProps> {
+export class ProductPreviewView extends CategoryCardView<ProductPreviewProps> {
   private buttonEl: HTMLButtonElement;
 
-  constructor(template: HTMLTemplateElement) {
-    const container = template.content.firstElementChild!
-      .cloneNode(true) as HTMLElement;
+  constructor(container: HTMLElement, onToggleCart: () => void) {
     super(container);
     this.buttonEl = container.querySelector('.card__button')!;
-  }
-
-render(data?: Partial<ProductPreviewProps>): HTMLElement {
-  super.render(data);
-
-  if (data?.disabled) {
-    this.buttonEl.disabled = true;
-    this.buttonEl.textContent = 'Недоступно';
-    this.buttonEl.classList.add('button_disabled'); 
-  } else {
-    this.buttonEl.disabled = false;
-    this.buttonEl.classList.remove('button_disabled');
-    this.buttonEl.textContent = data?.inCart
-      ? 'Удалить из корзины'
-      : 'В корзину';
-  }
-
-  return this.container;
-}
-
-setInCart(inCart: boolean) {
-  // Не обновляем состояние для бесценных товаров
-  if (this.buttonEl.disabled) return;
-  
-  this.buttonEl.textContent = inCart ? 'Удалить из корзины' : 'В корзину';
-}
-
-  onToggleCart(callback: () => void) {
-    if (this.buttonEl.disabled) return;
     this.buttonEl.addEventListener('click', e => {
       e.stopPropagation();
-      callback();
+      if (!this.buttonEl.disabled) {
+        onToggleCart();
+      }
     });
   }
 
-  
+  set inCart(value: boolean) {
+    if (this.buttonEl.disabled) return;
+    this.buttonEl.textContent = value ? 'Удалить из корзины' : 'В корзину';
+  }
+
+  set disabled(value: boolean) {
+    this.buttonEl.disabled = value;
+    if (value) {
+      this.buttonEl.textContent = 'Недоступно';
+      this.buttonEl.classList.add('button_disabled');
+    } else {
+      this.buttonEl.classList.remove('button_disabled');
+    }
+  }
 }

@@ -1,39 +1,23 @@
-
 import { Component } from '../base/Component';
+import { ensureElement } from '../../utils/utils';
 
 interface SuccessProps {
   total: string;
 }
 
 export class SuccessView extends Component<SuccessProps> {
-  private totalEl: HTMLElement | null; 
+  private totalEl: HTMLElement;
   private closeBtn: HTMLButtonElement;
 
-  constructor(template: HTMLTemplateElement) {
-    const container = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
+  constructor(container: HTMLElement) {
     super(container);
 
-    this.totalEl = container.querySelector('.success__description') || 
-                   container.querySelector('.success__total') || 
-                   container.querySelector('.order-success__description');
-    
-    this.closeBtn = container.querySelector('.button') as HTMLButtonElement;
-    
-    // Если элемент не найден, логируем для отладки
-    if (!this.totalEl) {
-      console.warn('Элемент для отображения суммы не найден в шаблоне успеха');
-      console.log('Доступные элементы:', container.innerHTML);
-    }
+    this.totalEl = ensureElement<HTMLElement>('.order-success__description', container);
+    this.closeBtn = ensureElement<HTMLButtonElement>('.button', container);
   }
 
-  render(data?: Partial<SuccessProps>): HTMLElement {
-    if (data?.total && this.totalEl) {
-      this.totalEl.textContent = `Списано ${data.total}`;
-    } else if (data?.total) {
-
-      console.error('Не могу отобразить сумму: элемент не найден');
-    }
-    return super.render(data);
+  set total(value: string) {
+    this.totalEl.textContent = `Списано ${value}`;
   }
 
   onClose(callback: () => void) {
